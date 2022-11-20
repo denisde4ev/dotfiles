@@ -4,7 +4,7 @@
 
 
 echo >&2 'WARNING: THIS IS OLD SCRIPT (should still woiks) !'
-YN_confirm n 'run anyway?'
+YN_confirm n 'run anyway?' || exit
 
 # TODO: REPLACE THIS SCRIPT FILE WITH ../denisde4ev-packages/.update-symlinks
 
@@ -19,7 +19,7 @@ cd "${0%/*}"
 pat='/^/ https://github.com/denisde4ev/*/raw/master'
 
 
-echo >&2 "$0: not tested but sh. should work.. I hope"
+echo >&2 "$0: not tested but s-s-should work.. I hope"
 echo >&2
 
 	unset interactive
@@ -52,7 +52,7 @@ esac
 ln_it() {
 	j=${1%/raw/master}
 	j=${j##*/}
-	[ ! -e "$j" ] || {
+	[ ! -L "$j" ] || {
 		printf %s\\n "link $j already exists." >&2
 		return
 	}
