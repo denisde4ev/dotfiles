@@ -13,8 +13,8 @@
 	excludesFile = ~/.config/.gitignore
 	sshCommand = ssh -F /etc/ssh/ssh_config
 	editor = "f(){ if [ -t 0 ]; then ${EDITOR?} \"$@\"; else tee \"$@\"; fi; }; f"
-[merge]
-	ff = false
+#[merge]
+#	ff = false # seems like `git pull` will not fast forwd with this config
 
 [alias]
 
@@ -41,6 +41,7 @@
 	add-alltracked = add -u
 	stat = status -sb
 	stat-all = stat --untracked-files --ignored
+	stat-diff = diff --name-status --format=
 	stat-commit = show --name-status --format=
 	stat-hash   = stat-commit
 	log-stat-sed = "!f(){ git stat-commit \"$@\" | sed -Ee 's/^([A-Z]{1,2})\\t/\\1 /'; };f"
@@ -57,12 +58,14 @@
 	unstage2 = reset HEAD --
 	push-this-new-branch = push --set-upstream origin HEAD
 	log-last = log -1 HEAD
-	log-short = log --all --author-date-order --decorate --graph --oneline --pretty=format:\"%C(magenta)%h%Creset -%C(red)%d%Creset %s %C(dim green)(%cr) [%an]\"
+	log-short = log --all --author-date-order --decorate --oneline --graph --pretty=format:\"%C(magenta)%h%Creset -%C(red)%d%Creset %s %C(dim green)(%cr) [%an]\"
 	log-short-local = log --decorate --oneline --graph --pretty=format:\"%C(magenta)%h%Creset -%C(red)%d%Creset %s %C(dim green)(%cr) [%an]\"
 	log-long = log --all --author-date-order --decorate --oneline --graph  --pretty=format:\"%C(magenta)%h %C(dim green)[%an]%C(red)%d %C(cyan)(%cr)%Creset\n %s\"
-	ls = grep  -l ''
+	log-hashes = log HEAD^..HEAD --pretty=format:"%H" # ment to be used in scripts # TODO: test it! seems to not log older commets when there was merge in the older commit
+	ls = ls-tree --name-only HEAD
+	# neeed to be tested (does not seems to work as expected?):   ls2 = grep  -l ''
+	ls-full = ls-tree --name-only HEAD --full-tree -r
 	undo-1commit = reset --soft HEAD~1
-#	unmerge  = reset --hard ORIG_HEAD
 	cleanout-force = !git clean -df && git checkout -- .
 	diff-staged = diff --cached
 
@@ -74,6 +77,9 @@
 	log-merge-span  = "!f() { echo $(git log -1 $2 --merges --pretty=format:%P | cut -d' ' -f1)$1$(git log -1 $2 --merges --pretty=format:%P | cut -d' ' -f2); }; f"
 	log-merge-log   = "!git ls `git log-merge-span .. $1`"
 	log-merge-diff  = "!git diff `git log-merge-span ... $1`"
+	isMerging = rev-parse -q --verify MERGE_HEAD
+	merge-ff = merge --ff-only
+	# _merge--allow-unrelated-histories = merge --allow-unrelated-histories
 
 	# src: https://github.com/thezeroalpha/dotfiles/blob/master/git/gitconfig
 	log-authors = !git log --all --format='%cN <%cE>' | sort -u
