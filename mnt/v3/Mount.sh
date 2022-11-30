@@ -8,20 +8,37 @@ o=$O
 o=${o##*/}
 o=${o%.sh}
 o=${o%_}
-case $o in Mount.sh|Mount) ;; *)
-
-
-unset d
 case $o in
-	*=*) d=/dev/disk/by-${o%%=*}/${o#*=};;
-	*) d=/dev/$o;;
-esac
-diskdir=${O%/*}/$o.d
-mount -v -- "$d" "$diskdir"
-cd -- "$diskdir"
+Mount.sh|Mount)
+###	case $1 in --help)
+###	printf %s\\n \
+###		"Usage: $o /dev/mount-point" \
+###		"will create symlink with that name" \
+###		"in basedir of the script and execute it" \
+###	;
+###	exit
+###	esac
+###	cd "${0%/*}" ||exit
+###	ln -sn -- "$o" "$1"
+###	"./$@"
+###	exit
+;; *)
+
+	# case ${USER:-$(id -un)} in root) ;; *) mount() { sudo \mount "$@"; }; esac
+	# uhh, my mount is alias that breaks this ....
+
+	unset d
+	case $o in
+		*=*) d=/dev/disk/by-${o%%=*}/${o#*=};;
+		*) d=/dev/$o;;
+	esac
+	diskdir=${O%/*}/$o.d
+	mount -v -- "$d" "$diskdir"
+	cd -- "$diskdir"
 
 
-${BASH_SOURCE:+return}
+	# ${BASH_SOURCE:+return}
+	return; exit
 exit; esac
 
 case ${1-} in --help) printf %s\\n "Usage: $o <NEW LINK TO MOUNT>"; exit; esac

@@ -1,0 +1,49 @@
+#!/usr/bin/env pp
+!!
+!| case ${reponame+x} in '')
+!| 	printf %s "reponame: " >&2
+!| 	read reponame < /dev/tty
+!! esac
+!!
+[core] # defaults
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+
+[remote "github"]
+	url = git@github.com:denisde4ev/!{printf %s "$reponame"}!.git
+	fetch = +refs/heads/*:refs/remotes/github/*
+[remote "_8"]
+	url = ssh://_8:/srv/git/!{printf %s "$reponame"}!
+	fetch = +refs/heads/*:refs/remotes/_8/*
+[remote "op5"]
+	url = ssh://op5:/^/ https://github.com/denisde4ev/!{printf %s "$reponame"}!/tree/master
+	fetch = +refs/heads/*:refs/remotes/op5/*
+[remote "op5-pc57"]
+	url = ssh://op5:/^/ https://github.com/denisde4ev/!{printf %s "$reponame"}!/tree/master
+	fetch = +refs/remotes/pc57/*:refs/remotes/pc57/*
+
+[branch "master"]
+	remote = master
+	merge = refs/heads/master
+!!
+!!
+!!# extra:
+!!
+!!# (from dotfiles config):
+!!##[core]
+!!##	repositoryformatversion = 0
+!!##	filemode = true
+!!##	logallrefupdates = true
+!!##
+!!##	worktree = /
+!!##	bare = false
+!!##
+!!##[core]
+!!##	excludesFile = /^/ https:/github.com/denisde4ev/dotfiles.git/gitignore
+!!##
+!!##	# bare = true
+!!##[status]
+!!##	showUntrackedFiles = no
+!!##
